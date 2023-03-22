@@ -1,0 +1,25 @@
+{
+  "name": "vutastic",
+  "version": "1.0.0",
+  "description": "Event Manager Project for Khanh Vu's COP4710 course.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mortikiy/vutastic.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mortikiy/vutastic/issues"
+  },
+  "homepage": "https://github.com/Mortikiy/vutastic#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "prisma": "^4.11.0"
+  }
+}

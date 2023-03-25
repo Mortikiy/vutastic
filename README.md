@@ -2,7 +2,7 @@
 
 Copy `.env.template` to `.env`. You shouldn't need to edit any of the values in `.env` unless you plan on using a local instance of MySQL. If so, edit the `DATABASE_URL` environment variable to match the following pattern:
 
-```json
+```env
 DATABASE_URL="mysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 ```
 

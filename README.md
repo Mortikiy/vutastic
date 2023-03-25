@@ -14,7 +14,9 @@ npm install
 
 *If you are setting up with Docker, the `node_modules` folder in each directory will expedite the time it takes for Express and React to start.*
 
-## Docker
+## Setup Processes
+
+### Docker
 
 In your terminal, run the following commands:
 
@@ -32,7 +34,7 @@ You should see three containers through Docker Desktop under the name "vutastic"
 Check the server container and make sure Prisma is properly connected to the database. If an exception occurred, restart the container.
 (_Given how first time setup takes about ten seconds longer than usual, it's not unlikely that the server will not wait for the database to be fully functional._)
 
-## Local
+### Local
 
 In `./client/package.json` change the following line:
 

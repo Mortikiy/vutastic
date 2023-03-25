@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
         if (location.latitude < 0) latLetter = 'S';
         if (location.longitude < 0) longLetter = 'W';
 
-        res.json({"error": `University at ${Math.abs(location.latitude)} ${latLetter} ${Math.abs(location.longitude)} ${longLetter} already exists!`});
+        res.status(409).json({message: `University at ${Math.abs(location.latitude)} ${latLetter} ${Math.abs(location.longitude)} ${longLetter} already exists!`});
     }
     res.json(university);
 });

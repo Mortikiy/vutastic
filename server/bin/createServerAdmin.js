@@ -16,6 +16,10 @@ async function createServerAdmin() {
             console.log("You need to run migrations! Run npx prisma migrate dev and then restart the application!");
             return;
         }
+        if (error instanceof Prisma.PrismaClientInitializationError) {
+            console.log(error);
+            return;
+        }
 
     }
 

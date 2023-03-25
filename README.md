@@ -34,6 +34,14 @@ You should see three containers through Docker Desktop under the name "vutastic"
 Check the server container and make sure Prisma is properly connected to the database. If an exception occurred, restart the container.
 (_Given how first time setup takes about ten seconds longer than usual, it's not unlikely that the server will not wait for the database to be fully functional._)
 
+In the `server` container, access the terminal and run the following command to migrate the database:
+
+```bash
+npx prisma migrate dev
+```
+
+This will populate the `db` container's MySQL instance with appropriate tables and columns.
+
 ### Local
 
 In `./client/package.json` change the following line:
@@ -54,7 +62,15 @@ In `./client` run the following command to make sure npm takes in the change mad
 npm install
 ```
 
-In both `./client` and `./server` run the following command:
+In `./server` run the following command to migrate the database:
+
+```bash
+npx prisma migrate dev
+```
+
+This will populate the MySQL instance with appropriate tables and columns.\
+
+Afterwards, in both `./client` and `./server` run the following command to start the application:
 
 ```bash
 npm start

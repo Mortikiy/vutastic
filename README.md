@@ -1,6 +1,12 @@
 # Getting Started
 
-Copy `.env.template` to `.env`. You shouldn't need to edit any of the values in `.env` unless you plan on using a local instance of MySQL. If so, edit the `DATABASE_URL` environment variable to match the following pattern:
+Copy `.env.template` to `.env`.
+
+Generate a sha256 hash (online or through the terminal) and edit `JWT_TOKEN` to match it. The hash must be at least 32 characters.
+
+Edit `SERVERADMIN_USER` and `SERVERADMIN_PASSWORD` to whatever you want the Server Admin's account to be. This account will be considered a `SERVERADMIN` and can send requests where a `SUPERADMIN` would be forbidden to.
+
+If you plan on using a local instance of MySQL, edit the `DATABASE_URL` environment variable to match the following pattern:
 
 ```env
 DATABASE_URL="mysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
@@ -85,3 +91,18 @@ On your web browser, head to `http://localhost:5000/express_backend`. You should
 ```
 
 This confirms that the server is running as appropriate. To see if React is running, head to `http://localhost:3000`. You should see a spinning React logo. At the bottom of the page (you may need to scroll down), you should see the same message defined in the JSON above. This confirms that the client is running as appropriate and is sending and receiving requests and responses successfully.
+
+# Authorization
+
+If you need to use the `SERVERADMIN` account for an API call (i.e., changing a user's role or changing a user's university), use the `api/login` route with the `SERVERADMIN_USER` and `SERVERADMIN_PASSWORD` as credentials for the email and password. Once a successful response is received, grab the token from the body and input it into another request as part of the Authorization header:
+
+```js
+fetch('/api/users/1', {
+    method: 'put',
+    headers: new Headers({
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+    }),
+    body: {...},
+});
+```

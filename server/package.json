@@ -20,8 +20,10 @@
   "homepage": "https://github.com/Mortikiy/vutastic#readme",
   "dependencies": {
     "@prisma/client": "^4.11.0",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "prisma": "^4.11.0"

@@ -22,7 +22,7 @@ npm install
 
 ## Setup Processes
 
-### Docker
+### Using Docker for Development
 
 In your terminal, run the following commands:
 
@@ -48,7 +48,7 @@ npx prisma migrate dev
 
 This will populate the `db` container's MySQL instance with appropriate tables and columns.
 
-### Local
+### Local Development
 
 In `./client/package.json` change the following line:
 

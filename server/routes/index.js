@@ -4,6 +4,7 @@ import credentials from './login-register.js';
 import rsos from './rsos.js'
 import notifications from './notifications.js'
 import users from './users.js'
+import events from './events.js'
 
 const router = express.Router();
 
@@ -13,9 +14,10 @@ router.get('/', (req, res) => { //Line 9
 });
 
 router.use('/universities', universities);
-router.use('/', credentials);
 router.use('/users', users);
 router.use('/rsos', rsos);
-router.use('/notifications', notifications)
+router.use('/notifications', notifications);
+router.use('/events', events);
+router.use('/', credentials);
 
 export default router;

@@ -4,6 +4,33 @@ import authenticateJWT from '../middleware/jwt.js';
 
 const router = express.Router();
 
+router.get('/', authenticateJWT, async (req, res) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const university = await prisma.university.findUnique({
+        where: {
+            id: user.universityId,
+        },
+    });
+
+    try {
+        const rsos = await prisma.rSO.findMany({
+            where: { universityId: university.id },
+        });
+
+        res.json(rsos);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error');
+    }
+});
+
 // Creates a "PENDING" RSO that will not be seen until a SUPERADMIN accepts.
 // Does NOT send the notification to the University/SUPERADMIN
 router.post('/request', authenticateJWT, async (req, res) => {
@@ -204,6 +231,70 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 
     return res.status(200).json({ message: 'Ownership transferred successfully' });
 
+});
+
+// Allows an admin to create an event
+// UNTESTED - IT LOOKS LIKE A MESS RIGHT NOW
+router.post(':id/events', authenticateJWT, async (req, res) => {
+    const { name, category, description, type, startTime, endTime, latitude, longitude, locationName, contactPhone, contactEmail } = req.body;
+    const { id } = req.params;
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const rso = await prisma.rSO.findUnique({
+        where: { id },
+        include: { members: true }
+    });
+
+    if (!rso) {
+        return res.status(404).json({ message: 'RSO not found' });
+    }
+
+    if (rso.adminId !== user.id) {
+        return res.status(403).json({ error: 'User is not an admin of the RSO' });
+    }
+
+    const event = await prisma.event.create({
+        data: {
+            name,
+            category,
+            description,
+            startTime: new Date(startTime),
+            endTime: new Date(endTime),
+            location: {
+                connectOrCreate: {
+                    where: {
+                        longitude,
+                        latitude,
+                    },
+                    create: {
+                        longitude,
+                        latitude,
+                        name: locationName,
+                        university: {
+                            connect: {
+                                id: rso.universityId
+                            },
+                        },
+                    },
+                },
+            },
+            contactPhone,
+            contactEmail,
+            university: { connect: { id: rso.universityId } },
+            type: type || "RSO",
+            rso: { connect: { id: rso.id } },
+            host: { connect: { id: user.id } },
+        },
+        include: { location: true },
+    });
+
+    return res.status(201).json({ event });
 });
 
 export default router;

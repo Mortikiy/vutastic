@@ -8,7 +8,6 @@ const authenticateJWT = async (req, res, next) => {
         const token = authHeader;
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decoded)
             const user = await prisma.user.findUnique({ where: { id: decoded.userId }});
 
             if (user) {

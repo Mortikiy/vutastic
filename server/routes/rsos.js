@@ -235,7 +235,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 
 // Allows an admin to create an event
 // UNTESTED - IT LOOKS LIKE A MESS RIGHT NOW
-router.post(':id/events', authenticateJWT, async (req, res) => {
+router.post('/:id/events', authenticateJWT, async (req, res) => {
     const { name, category, description, type, startTime, endTime, latitude, longitude, locationName, contactPhone, contactEmail } = req.body;
     const { id } = req.params;
 

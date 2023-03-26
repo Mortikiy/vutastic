@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from '../app.js';
+import prisma from '../bin/db.js';
 import authenticateJWT from '../middleware/jwt.js';
 
 const router = express.Router();
@@ -13,7 +13,7 @@ router.post('/request', authenticateJWT, async (req, res) => {
         where: { id: req.user.id },
     });
     if (!user) {
-        return res.status(406).json({ error: 'User not found.' });
+        return res.status(404).json({ error: 'User not found.' });
     }
 
     // Verifies that the RSO does not already exist
@@ -32,8 +32,10 @@ router.post('/request', authenticateJWT, async (req, res) => {
         },
     });
 
+    memberObjects.push(user);
+
     for (let member in memberObjects) {
-        if (!member) return res.status(406).json({ error: 'User not found in members array.' });
+        if (!member) return res.status(404).json({ error: 'User not found in members array.' });
     }
 
     const university = await prisma.university.findUnique({
@@ -68,6 +70,139 @@ router.post('/request', authenticateJWT, async (req, res) => {
     });
 
     res.json(rso);
+
+});
+
+// Allows a member to leave an RSO unless they are the ADMIN
+router.put('/:id/leave', authenticateJWT, async(req, res) => {
+    const id = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const rso = await prisma.rSO.findUnique({
+        where: { id },
+        include: { members: true }
+    });
+
+    if (!rso) {
+        return res.status(404).json({ message: 'RSO not found' });
+    }
+
+    // Check if the user is the RSO Admin
+    if (rso.adminId === user.id) {
+        // Check if there are other members in the RSO
+        if (rso.members.length > 0) {
+            return res.status(400).json({ message: 'Cannot leave RSO. Transfer ownership first' });
+        } else {
+            // Delete the RSO since the admin is the only member left
+            await prisma.rSO.delete({ where: { id: rso.id } });
+            return res.status(200).json({ message: 'RSO deleted' });
+        }
+    }
+
+    if (!rso.members.some(member => member.id === user.id)) {
+        return res.status(400).json({ error: 'User is not a member of this RSO' });
+    }
+
+    await prisma.rSO.update({
+        where: { id: rso.id },
+        data: { members: { disconnect: { id: user.id } } },
+    });
+
+    return res.status(200).json({ message: 'Successfully left RSO' });
+
+});
+
+// Adds a user to an RSO as a member
+router.put('/:id/join', authenticateJWT, async(req, res) => {
+    const id = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const rso = await prisma.rSO.findUnique({
+        where: { id },
+        include: { members: true }
+    });
+
+    if (!rso) {
+        return res.status(404).json({ message: 'RSO not found' });
+    }
+
+    if (rso.members.some(member => member.id === user.id)) {
+        return res.status(400).json({ error: 'User is not a member of this RSO' });
+    }
+
+    await prisma.rSO.update({
+        where: { id: rso.id },
+        data: { members: { connect: { id: user.id } } },
+    });
+
+    return res.status(200).json({ message: 'Successfully joined RSO' });
+
+});
+
+// Allows an admin to make another member of their RSO an admin
+router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
+    const { newAdminId } = req.body;
+    const id = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const rso = await prisma.rSO.findUnique({
+        where: { id },
+        include: { members: true }
+    });
+
+    if (!rso) {
+        return res.status(404).json({ message: 'RSO not found' });
+    }
+
+    if (rso.adminId !== user.id) {
+        return res.status(403).json({ error: 'User is not an admin of the RSO' });
+    }
+
+    // check if the new admin exists and is a member of the RSO
+    const newAdmin = await prisma.user.findUnique({
+        where: { id: parseInt(newAdminId) },
+        include: { rsos: true },
+    });
+
+    if (!newAdmin) {
+        return res.status(404).json({ error: 'New admin user not found' });
+    }
+
+    if (!rso.members.some(member => member.id === newAdmin.id)) {
+        return res.status(400).json({ error: 'New admin user is not a member of the RSO' });
+    }
+
+    await prisma.rSO.update({
+        where: { id: rso.id },
+        data: {
+            admin: {
+                connect: { id: newAdmin.id },
+            },
+            members: {
+                connect: { id: user.id },
+            },
+        }
+    });
+
+    return res.status(200).json({ message: 'Ownership transferred successfully' });
 
 });
 

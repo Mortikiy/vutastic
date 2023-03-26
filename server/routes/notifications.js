@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from '../app.js';
+import prisma from '../bin/db.js';
 import authenticateJWT from '../middleware/jwt.js';
 
 const router = express.Router();
@@ -52,7 +52,7 @@ router.post('/', authenticateJWT, async (req, res) => {
         where: { id: req.user.id },
     });
     if (!user) {
-        return res.status(406).json({ error: 'User not found' });
+        return res.status(404).json({ error: 'User not found' });
     }
 
     const university = await prisma.university.findUnique({
@@ -73,7 +73,7 @@ router.post('/', authenticateJWT, async (req, res) => {
             },
         });
 
-        if (!event) return res.status(406).json({ error: 'The event specified does not exist.'});
+        if (!event) return res.status(404).json({ error: 'The event specified does not exist.'});
         if (user.id !== event.hostId) return res.status(403).json({ error: 'User is not the host of the event specified.' });
 
         notification = await prisma.notification.create({
@@ -104,7 +104,7 @@ router.post('/', authenticateJWT, async (req, res) => {
             },
         });
 
-        if (!rso) return res.status(406).json({ error: 'The RSO specified does not exist.'})
+        if (!rso) return res.status(404).json({ error: 'The RSO specified does not exist.'})
         if (user.id !== rso.adminId) return res.status(403).json({ error: 'User is not the admin of the RSO specified.' });
 
         notification = await prisma.notification.create({

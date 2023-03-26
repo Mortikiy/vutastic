@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import prisma from '../app.js'
+import prisma from './db.js';
 import bcrypt from 'bcrypt';
 
 async function createServerAdmin() {
@@ -20,7 +20,6 @@ async function createServerAdmin() {
             console.log(error);
             return;
         }
-
     }
 
     let university = await prisma.university.findUnique({

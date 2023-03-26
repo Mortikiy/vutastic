@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import prisma from '../app.js';
+import prisma from '../bin/db.js';
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
     })
 
     if (!university) {
-        return res.status(406).json({ error: 'University not found' });
+        return res.status(404).json({ error: 'University not found' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

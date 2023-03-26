@@ -84,7 +84,7 @@ npm start
 
 ## Testing If It Worked
 
-On your web browser, head to `http://localhost:5000/api/express_backend`. You should see the following JSON object:
+On your web browser, head to `http://localhost:5000/api/`. You should see the following JSON object:
 
 ```json
 "express": "YOUR EXPRESS BACKEND IS CONNECTED TO REACT"

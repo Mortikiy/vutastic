@@ -3,7 +3,7 @@ import "./styles.css";
 
 function Login(props) 
 {
-  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
    
   const handleClick2 = () => {
@@ -25,7 +25,6 @@ function Login(props)
       return 1;
     else
       return 200;
-
   }
 
   const handleSubmit = (event) => {
@@ -50,66 +49,53 @@ function Login(props)
               ;
             }
         }
-    
-    fetch('',
+
+    fetch('/api/login',
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ login, password }),
+      body: JSON.stringify({ email, password }),
     })
       .then((response) =>
       {
-        if (!response.ok)
+        if (response.status === 401)
         {
-          throw new Error('Network error - response not OK');
+            errmsg.innerHTML="Incorrect/invalid combination."; 
+            throw new Error('Invalid login');
         }
         return response.json();
       })
       .then((data) =>
       {
-        if (data.error === ('no user found'))
-        {
-          errmsg.innerHTML="Incorrect or invalid combination.";
-        }
-          
-
-        else if (data.error === ('please confirm email'))
-        {
-          errmsg.innerHTML="Please confirm your email to log in.";
-        }
-
-        // LOGGED IN
-        else
-        {
-          console.log(data);
-          alert('Hello, '+data.firstName+' '+data.lastName+'!');
-        }
-          
+          // Just display JWT for now
+          alert("Hello, "+data.token);
 
         // Here is where we do something with the response data our call gives us (nothing for login besides a cookie maybe)
       })
       .catch((error) => 
       {
-        console.error('Login request error:', error);
+        // Silent handle
+        if (error.message.includes("login"))
+          return;
       });
-  };
+};
 
   return (
     <div className="form-container">
       <h1 className="form-title">Login</h1>
       <form onSubmit={handleSubmit} className="form">
         <div className="form-group">
-          <label htmlFor="username" className="form-label">
-          Username:
+          <label htmlFor="email" className="form-label">
+          Email:
           </label>
           <input
-            placeholder="Username"
+            placeholder="Email"
             type="text"
-            id="username"
-            value={login}
-            onChange={(event) => setLogin(event.target.value)}
+            id="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             className="form-input"
           />
         </div>

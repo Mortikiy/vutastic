@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./styles.css";
 
@@ -8,13 +8,34 @@ function Signup(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    
+    const [universityId, setSelectedId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    const [options, setOptions] = useState([]);
     const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
     setConfirm(!confirm);
     }
+
+    useEffect (() => {
+      fetch('/api/universities/', {
+        method: 'GET',
+        headers:
+        {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data =>
+        {
+          setOptions(data);
+        })
+      .catch(error =>
+      {
+        console.log(error);
+      });
+   }, []);
+
     const handleClick = () => {
       props.handleFunction();
     };
@@ -42,8 +63,7 @@ function Signup(props) {
         msg.innerHTML="Passwords do not match.";
         msg.style.color="red";
       }
-      
-    }
+    };
 
    function passwordsMatch()
    {
@@ -79,9 +99,16 @@ function Signup(props) {
       else if (passRestriction.test(password) === false)
         return 3;
 
-      if (!passwordsMatch())
+      else if (!passwordsMatch())
         return 4;
+      else if (universityId === "")
+        return 404;
       return 5;
+    }
+
+    const handleSelectChange = (event) => 
+    {
+      setSelectedId(event.target.value);
     }
 
     const handleSubmit = (event) => {
@@ -114,6 +141,12 @@ function Signup(props) {
             signUpErrMsg.style.color='red';
             return;
           }
+        case 404:
+          {
+            signUpErrMsg.innerHTML="Please choose a";
+            signUpErrMsg.style.color='red';
+            return;
+          }
         case 5:
           {
             // Continue to fetch
@@ -121,50 +154,62 @@ function Signup(props) {
           }
       }
 
-      
+      const req = JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        universityId: Number(universityId)
+      })
       // Sign up API here
-      fetch('',
+      fetch('/api/register',
       {
         method: 'POST',
         headers:
         {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: req
       })
       .then((response) =>
       {
-        if (!response.ok)
+        if (response === 409)
         {
-          throw new Error('Network error - response not OK');
+          signUpErrMsg.innerHTML="An account with this email already exists.";
+          signUpErrMsg.style.color='red';
+          throw new Error ("User already exists");
         }
+
+        else if (response === 404)
+        {
+          signUpErrMsg.innerHTML="University doesn't exist.";
+          signUpErrMsg.style.color='red';
+          throw new Error ("University not found");
+        }
+
         return response.json();
       })
-      .then((data) =>
+      .then(() =>
       {
-        if (data.error === ('user already exists'))
-        {
-          alert('Error: User already exists!');
-        }
-        
-        else
-        {
           let signUpErrMsg = document.getElementById('signUpError');
           document.getElementById("signUpForm").querySelectorAll("input").forEach((input) => {
             input.value = "";
           });
+          setEmail('');
+          setfirstName('');
+          setlastName('');
+          setOptions('');
           passwordVerification();
-          signUpErrMsg.innerHTML="New account made! Verification email sent.";
+          signUpErrMsg.innerHTML="New account made!";
           signUpErrMsg.style.color='green';
-
-        }
       })
       .catch((error) => 
       {
-        console.error('Signup request error:', error);
+        // Silent handles
+        if (error.message.includes("exists") || error.message.includes("not found"))
+          return;
       });
     };
-  
     return (
       <div className="form-container">
         <h1 className="form-title">Sign Up</h1>
@@ -212,6 +257,17 @@ function Signup(props) {
             />
           </div>
           <div className="form-group">
+            <label htmlFor="university" className="form-label">
+              University:
+            </label>
+            <select onChange={handleSelectChange}>
+            <option value="">Select an option...</option>
+              {options.map(obj => (
+                <option key = {obj.id} value = {obj.id}>{obj.description}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
             <label htmlFor="password" className="form-label">
               Password:
             </label>
@@ -253,5 +309,4 @@ function Signup(props) {
       </div>
     );
   }
-
 export default Signup;

@@ -1,33 +1,33 @@
 {
-  "name": "vutastic",
-  "version": "1.0.0",
-  "description": "Event Manager Project for Khanh Vu's COP4710 course.",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Mortikiy/vutastic.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Mortikiy/vutastic/issues"
-  },
-  "homepage": "https://github.com/Mortikiy/vutastic#readme",
-  "dependencies": {
-    "@prisma/client": "^4.11.0",
-    "bcrypt": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.0",
-    "react-router-dom": "^6.9.0"
-  },
-  "devDependencies": {
-    "prisma": "^4.11.0"
+    "name": "vutastic",
+    "version": "1.0.0",
+    "description": "Event Manager Project for Khanh Vu's COP4710 course.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+      "start": "node app.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Mortikiy/vutastic.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/Mortikiy/vutastic/issues"
+    },
+    "homepage": "https://github.com/Mortikiy/vutastic#readme",
+    "dependencies": {
+      "@prisma/client": "^4.11.0",
+      "bcrypt": "^5.1.0",
+      "cors": "^2.8.5",
+      "dotenv": "^16.0.3",
+      "express": "^4.18.2",
+      "jsonwebtoken": "^9.0.0",
+      "react-router-dom": "^6.9.0"
+    },
+    "devDependencies": {
+      "prisma": "^4.11.0"
+    }
   }
-}

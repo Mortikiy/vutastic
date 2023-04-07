@@ -260,7 +260,7 @@ function Signup(props) {
             <label htmlFor="university" className="form-label">
               University:
             </label>
-            <select onChange={handleSelectChange}>
+            <select style={{marginLeft: "10px"}} onChange={handleSelectChange}>
             <option value="">Select an option...</option>
               {options.map(obj => (
                 <option key = {obj.id} value = {obj.id}>{obj.description}</option>

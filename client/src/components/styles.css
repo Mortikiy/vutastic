@@ -63,6 +63,22 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 }
+#mapbutton
+{
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4361EE;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#mapbutton:hover
+{
+  background-color: #4CC9F0;
+}
 
 .form-button:hover {
   background-color: #4CC9F0;

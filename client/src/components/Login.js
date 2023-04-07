@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "./styles.css";
+import jwt_decode from 'jwt-decode';
+import { useNavigate } from "react-router-dom";
 
 function Login(props) 
 {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-   
+  const navigate = useNavigate();
   const handleClick2 = () => {
     props.handleFunction2();
   };
@@ -69,10 +71,18 @@ function Login(props)
       })
       .then((data) =>
       {
-          // Just display JWT for now
-          alert("Hello, "+data.token);
-
-        // Here is where we do something with the response data our call gives us (nothing for login besides a cookie maybe)
+          // Decoded token
+          const decoded = jwt_decode(data.token);
+          localStorage.setItem('token', data.token);
+          
+          if (decoded.role === 'SERVERADMIN')
+          {
+            navigate('/superadmin');
+          }
+          else
+          {
+            navigate('/home');
+          }
       })
       .catch((error) => 
       {

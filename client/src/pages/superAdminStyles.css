@@ -1,0 +1,38 @@
+.container
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+  }
+  
+  .button {
+    background-color: #3f51b5;
+    color: #fff;
+    border-radius: 5px;
+    padding: 15px 30px;
+    margin: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+  
+  .button:hover {
+    background-color: #5064e3;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+  }
+
+  #logoff
+  {
+    background-color: #c41717;
+  }
+
+  #logoff:hover
+  {
+    background-color: hsl(0, 71%, 56%);
+  }
+  

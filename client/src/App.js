@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import LoginPage from './pages/LoginPage';
-
-
+import HomePage from './pages/HomePage';
+import SuperAdminPage from './pages/SuperAdminPage';
+import University from './components/University';
 class App extends Component {
 state = {
     data: null
@@ -27,9 +28,14 @@ state = {
 
     render() {
         return (
-        <div className="App">
-            <LoginPage/>
-        </div>
+        <BrowserRouter forceRefresh={true}>
+            <Routes>
+                <Route path="/" index element={<LoginPage/>} />
+                
+                <Route path="/superadmin" index element={<SuperAdminPage/>}/>
+                <Route path="/superadmin/university" index element={<University/>}/>
+            </Routes>
+        </BrowserRouter>
         );
     }
 }

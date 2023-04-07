@@ -74,6 +74,25 @@ router.post('/', authenticateJWT, async (req, res) => {
                 picture,
             },
         });
+
+        await prisma.user.update({
+            where: {
+                id: req.user.id,
+            },
+            data: {
+                university: {
+                    connect: {
+                        id: university.id,
+                    },
+                },
+                superadmin: {
+                    connect: {
+                        id: university.id,
+                    },
+                },
+            },
+        });
+        
     } catch (err) {
         console.log(err);
         let latLetter = 'N';

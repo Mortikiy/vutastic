@@ -64,12 +64,18 @@ router.post('/', authenticateJWT, async (req, res) => {
                         id: locationObj.id,
                     },
                 },
+                superadmin: {
+                    connect: {
+                        id: user.id,
+                    }
+                },
                 description,
                 numStudents,
                 picture,
             },
         });
     } catch (err) {
+        console.log(err);
         let latLetter = 'N';
         let longLetter = 'E';
         if (location.latitude < 0) latLetter = 'S';

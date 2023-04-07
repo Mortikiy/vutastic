@@ -1,7 +1,13 @@
 import express from 'express';
 import prisma from '../bin/db.js';
+import authenticateJWT from '../middleware/jwt.js';
 
 const router = express.Router();
+
+function isNotElevatedAdmin(role) {
+    return (role !== 'SUPERADMIN' && role !== 'SERVERADMIN')
+}
+
 
 router.get('/', async (req, res) => {
     const universities = await prisma.university.findMany();
@@ -17,7 +23,18 @@ router.get('/:id', async (req, res) => {
     res.json(university);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateJWT, async (req, res) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    if (isNotElevatedAdmin(req.user.role)) {
+        return res.status(401).json({ error: 'You are not authorized to create a university' });
+    }
+
     const { name, location, description, numStudents, picture } = req.body;
     let locationObj = await prisma.location.findUnique({
             where: {
@@ -63,11 +80,24 @@ router.post('/', async (req, res) => {
     res.json(university);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateJWT, async (req, res) => {
+
+    const id = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    if (isNotElevatedAdmin(req.user.role) || (user.universityId !== id && user.role !== "SERVERADMIN")) {
+        return res.status(401).json({ error: 'You are not authorized to edit this university' });
+    }
+    
     const { name, location, description, numStudents, picture } = req.body;
     const university = await prisma.university.update({
         where: {
-            id: parseInt(req.params.id),
+            id: id,
         },
         data: {
             name,
@@ -80,10 +110,23 @@ router.put('/:id', async (req, res) => {
     res.json(university);
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateJWT, async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    if (isNotElevatedAdmin(req.user.role) || (user.universityId !== id && user.role !== "SERVERADMIN")) {
+        return res.status(401).json({ error: 'You are not authorized to delete this university' });
+    }
+
     const university = await prisma.university.delete({
+
         where: {
-            id: parseInt(req.params.id),
+            id: id,
         },
     });
     res.json(university);

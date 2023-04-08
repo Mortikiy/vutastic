@@ -92,7 +92,7 @@ router.post('/', authenticateJWT, async (req, res) => {
                 },
             },
         });
-        
+
     } catch (err) {
         console.log(err);
         let latLetter = 'N';
@@ -102,7 +102,14 @@ router.post('/', authenticateJWT, async (req, res) => {
 
         res.status(409).json({message: `University at ${Math.abs(location.latitude)} ${latLetter} ${Math.abs(location.longitude)} ${longLetter} already exists!`});
     }
-    res.json(university);
+
+    const token = jwt.sign({ userId: user.id, role: user.role, universityId: user.universityId }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    } );
+
+    res.cookie('token', token, { httpOnly: true });
+
+    res.json({ university, cookie });
 });
 
 router.put('/:id', authenticateJWT, async (req, res) => {

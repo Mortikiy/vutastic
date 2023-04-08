@@ -104,7 +104,7 @@ router.post('/', authenticateJWT, async (req, res) => {
         res.status(409).json({message: `University at ${Math.abs(location.latitude)} ${latLetter} ${Math.abs(location.longitude)} ${longLetter} already exists!`});
     }
 
-    const token = jwt.sign({ userId: user.id, role: user.role, universityId: user.universityId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, role: user.role, universityId: university.universityId }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     } );
 

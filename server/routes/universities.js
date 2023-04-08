@@ -110,7 +110,7 @@ router.post('/', authenticateJWT, async (req, res) => {
 
     res.cookie('token', token, { httpOnly: true });
 
-    res.json({ university, cookie });
+    res.json({ university, token });
 });
 
 router.put('/:id', authenticateJWT, async (req, res) => {

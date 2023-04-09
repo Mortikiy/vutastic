@@ -75,7 +75,7 @@ function Login(props)
           const decoded = jwt_decode(data.token);
           localStorage.setItem('token', data.token);
           
-          if (decoded.role === 'SERVERADMIN')
+          if (decoded.role === 'SERVERADMIN' || decoded.role === 'SUPERADMIN')
           {
             navigate('/superadmin');
           }

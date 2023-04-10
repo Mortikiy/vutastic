@@ -74,6 +74,9 @@ router.post('/', authenticateJWT, async (req, res) => {
                 numStudents,
                 picture,
             },
+            include: {
+                location: true,
+            }
         });
 
         await prisma.user.update({

@@ -20,6 +20,9 @@ router.get('/:id', async (req, res) => {
         where: {
             id: parseInt(req.params.id),
         },
+        include: {
+            location: true,
+        }
     });
     res.json(university);
 });

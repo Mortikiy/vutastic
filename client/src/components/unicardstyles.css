@@ -1,0 +1,84 @@
+.university-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .university-card {
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    max-width: 900px; /* increased max-width to 900px */
+  }
+  
+  .university-picture img {
+    width: 250px; /* increased width to 250px */
+    height: 250px; /* increased height to 250px */
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .university-picture {
+    margin-right: 20px;
+  }
+  
+  .university-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .university-name {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .university-location {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .university-description {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .university-students {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .university-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+  }
+  
+  .university-button {
+    background-color: #0077cc;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .university-button:hover {
+    background-color: #005fa3;
+  }
+  

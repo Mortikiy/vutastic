@@ -162,7 +162,11 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
             id: id,
         },
     });
-    res.json(university);
+    
+    const token = jwt.sign({ userId: user.id, role: user.role, universityId: university.id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    } );
+    res.json(token);
 });
 
 export default router;

@@ -104,7 +104,6 @@ function CreateUniversity(props) {
       .then((data) =>
       {
         // Sucess, refresh page
-        console.log("SUCESS: TOKEN   " + data.token);
         props.onTokenChange(data.token);
       })
       .catch((error) => 

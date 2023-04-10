@@ -7,18 +7,18 @@ function University()
 {
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
-    const msg = "test!";
     const [myToken, setMyToken] = useState(localStorage.getItem('token'))
+    const [university, setUniversity] = useState();
 
   function handleTokenChange(newToken)
   {
     setMyToken(newToken);
     localStorage.setItem('token', newToken);
+    setUniversity(jwt_decode(newToken).university);
   }
 
   useEffect(() =>
   {
-        console.log(myToken);
         // To login page if no token
         if (!myToken)
         {
@@ -26,7 +26,7 @@ function University()
             return;
         }
     let decodedUniId = jwt_decode(myToken).universityId;
-    console.log(jwt_decode(myToken));
+    
     if (!decodedUniId)
     {
       decodedUniId = -1;
@@ -55,7 +55,11 @@ function University()
         if (data === null)
           setShow(true);
         else
+        {
           setShow(false);
+          setUniversity(data);
+        }
+          
     })
     .catch((error) => 
       {
@@ -64,10 +68,10 @@ function University()
       });
   }, [myToken]);
 
-
     return (
         <div>
-        {show && <CreateUniversity onTokenChange={handleTokenChange}/> || <UniversityCard />}
+        {show && <CreateUniversity onTokenChange={handleTokenChange}/> }
+        {university ? <UniversityCard university={university} onTokenChange={handleTokenChange}/> : null }
         </div>
     );
 }

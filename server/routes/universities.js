@@ -132,22 +132,52 @@ router.put('/:id', authenticateJWT, async (req, res) => {
     if (isNotElevatedAdmin(req.user.role) || (user.universityId !== id && user.role !== "SERVERADMIN")) {
         return res.status(401).json({ error: 'You are not authorized to edit this university' });
     }
-    
-    const { name, location, description, numStudents, picture } = req.body;
+
+    const { name, description, numStudents, picture, location } = req.body;
+
+    let updatedLocation;
+    if (location.id) {
+        // If a locationId is provided, update the existing location record
+        updatedLocation = await prisma.location.update({
+            where: {
+                id: location.id,
+            },
+            data: {
+                name: location.name,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            },
+        });
+    } else {
+        // If no locationId is provided, create a new location record
+        updatedLocation = await prisma.location.create({
+            data: {
+                name: location.name,
+                latitude: location.latitude,
+                longitude: location.longitude,
+            },
+        });
+    }
+
     const university = await prisma.university.update({
         where: {
             id: id,
         },
         data: {
             name,
-            location,
             description,
             numStudents,
             picture,
+            locationId: updatedLocation.id,
         },
     });
-    res.json(university);
+
+    const token = jwt.sign({ userId: user.id, role: user.role, universityId: university.id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    } );
+    res.json({ university, token });
 });
+
 
 router.delete('/:id', authenticateJWT, async (req, res) => {
     const id = parseInt(req.params.id);

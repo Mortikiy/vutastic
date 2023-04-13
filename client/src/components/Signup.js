@@ -262,9 +262,9 @@ function Signup(props) {
             </label>
             <select style={{marginLeft: "10px"}} onChange={handleSelectChange}>
             <option value="">Select an option...</option>
-              {options.map(obj => (
-                <option key = {obj.id} value = {obj.id}>{obj.description}</option>
-              ))}
+              {options ? options.map(obj => (
+                <option key = {obj.id} value = {obj.id}>{obj.name}</option>
+              )) : <div>No options!</div>}
             </select>
           </div>
           <div className="form-group">

@@ -43,25 +43,38 @@ function CreateUniversity(props) {
             return;
         }
     const user = jwt_decode(myToken);
-
-  const handleAddress = (event) =>
-  {
+    const handleAddress = (event) => {
       event.preventDefault();
       const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address }, (results, status) => {
-      if (status === 'OK') 
-      {
-        const locate = results[0].geometry.location;
-        document.getElementById("errorMsg").innerHTML="";
-        setLocation({ latitude: locate.lat(), longitude: locate.lng() });
-        setCenter({lat: locate.lat(), lng: locate.lng()});
+      const addressValue = address.trim();
+      
+      if (addressValue) {
+        geocoder.geocode({ address: addressValue }, (results, status) => {
+          if (status === 'OK') {
+            const locate = results[0].geometry.location;
+            const address = results[0].formatted_address;
+            document.getElementById("errorMsg").innerHTML="";
+            setLocation({ latitude: locate.lat(), longitude: locate.lng(), name: address });
+            setCenter({ lat: locate.lat(), lng: locate.lng() });
+          } else {
+            document.getElementById("errorMsg").innerHTML="Invalid address";
+          }
+        });
+      } else {
+        geocoder.geocode(location, (results, status) => {
+          if (status === 'OK') {
+            const address = results[0].formatted_address;
+            document.getElementById("errorMsg").innerHTML="";
+            setLocation({ latitude: location.latitude, longitude: location.longitude, name: address });
+            setCenter({ lat: location.latitude, lng: location.longitude });
+          } else {
+            document.getElementById("errorMsg").innerHTML="Could not retrieve address for the provided location";
+          }
+        });
       }
-      else
-      {
-        document.getElementById("errorMsg").innerHTML="Invalid address";
-      }
-    });
-  }
+    }
+    
+    
 
   const handleSubmit = (event) => {
     event.preventDefault();

@@ -137,7 +137,6 @@ router.post('/', authenticateJWT, async (req, res) => {
 
 router.put('/:id/accept', authenticateJWT, async (req, res) => {
     const notificationId = parseInt(req.params.id);
-
     const user = await prisma.user.findUnique({
         where: { id: req.user.id },
     });
@@ -148,7 +147,7 @@ router.put('/:id/accept', authenticateJWT, async (req, res) => {
         return res.status(401).json({ error: 'You are not authorized to accept notifications' });
     }
 
-    const notification = await prisma.user.findUnique({
+    const notification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
     if (!notification) {
@@ -171,13 +170,16 @@ router.put('/:id/accept', authenticateJWT, async (req, res) => {
                 status: "ACTIVE",
             },
         });
-
-        await prisma.user.update({
-            where: { id: notification.adminId },
-            data: {
-                role: "ADMIN",
-            }
-        });
+        
+        if (user.role !== 'SUPERADMIN')
+        {
+            await prisma.user.update({
+                where: { id: notification.adminId },
+                data: {
+                    role: "ADMIN",
+                }
+            });
+        }
     } else {
         return res.status(400).json({ error: 'The type parameter must be either "EVENT" or "RSO".'});
     }
@@ -201,10 +203,10 @@ router.put('/:id/decline', authenticateJWT, async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
     if (isNotElevatedAdmin(req.user.role)) {
-        return res.status(401).json({ error: 'You are not authorized to accept notifications' });
+        return res.status(401).json({ error: 'You are not authorized to decline notifications' });
     }
 
-    const notification = await prisma.user.findUnique({
+    const notification = await prisma.notification.findUnique({
         where: { id: notificationId },
     });
     if (!notification) {

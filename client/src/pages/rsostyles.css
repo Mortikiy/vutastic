@@ -1,0 +1,139 @@
+.rso-page-container {
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .rso-page-title {
+    margin-bottom: 2rem;
+  }
+  
+  .rso-cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  
+  .rso-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .rso-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .rso-card button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .rso-card button:hover {
+    background-color: #0069d9;
+  }
+  
+  .no-rso-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .no-rso-message {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  .create-rso-container {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  .create-rso-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .create-rso-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .create-rso-form-container {
+    margin-top: 2rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 1rem;
+  }
+  
+  .create-rso-form-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .create-rso-form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .create-rso-form-input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .create-rso-form-button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .create-rso-form-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+   
+  .create-rso-submit-button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  

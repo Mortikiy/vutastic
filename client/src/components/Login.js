@@ -81,7 +81,7 @@ function Login(props)
           }
           else
           {
-            navigate('/home');
+            navigate('/student');
           }
       })
       .catch((error) => 

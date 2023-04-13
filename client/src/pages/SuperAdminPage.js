@@ -26,6 +26,18 @@ function SuperAdminPage() {
         return;
     }
 
+    const goRSO = () =>
+    {
+      navigate('/superadmin/rso');
+      return;
+    }
+
+    const goReq = () =>
+    {
+      navigate('/superadmin/requests');
+      return;
+    }
+
     const signOut = () =>
     {
         localStorage.removeItem('token');
@@ -41,10 +53,10 @@ function SuperAdminPage() {
       <button className="button" onClick={goUniv}>
         University Profile
       </button>
-      <button className="button">
-        Approve Request
+      <button className="button" onClick={goReq}>
+        Approve/Deny Request
       </button>
-      <button className="button">
+      <button className="button" onClick={goRSO}>
         RSOs
       </button>
       <button className="button">

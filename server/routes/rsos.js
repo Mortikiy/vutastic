@@ -55,7 +55,7 @@ router.post('/request', authenticateJWT, async (req, res) => {
     // Verifies all of the members exist
     const memberObjects = await prisma.user.findMany({
         where: {
-            id: { in: members },
+            email: { in: members },
         },
     });
 

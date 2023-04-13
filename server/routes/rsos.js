@@ -61,10 +61,6 @@ router.post('/request', authenticateJWT, async (req, res) => {
 
     memberObjects.push(user);
 
-    for (let member in memberObjects) {
-        if (!member) return res.status(404).json({ error: 'User not found in members array.' });
-    }
-
     const university = await prisma.university.findUnique({
         where: {
             id: user.universityId,
@@ -183,8 +179,7 @@ router.put('/:id/join', authenticateJWT, async(req, res) => {
 
 // Allows an admin to make another member of their RSO an admin
 router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
-    const { newAdminId } = req.body;
-    const id = parseInt(req.params.id);
+    const { newAdminEmail } = req.body;
 
     const user = await prisma.user.findUnique({
         where: { id: req.user.id },
@@ -208,7 +203,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 
     // check if the new admin exists and is a member of the RSO
     const newAdmin = await prisma.user.findUnique({
-        where: { id: parseInt(newAdminId) },
+        where: { email: newAdminEmail },
         include: { rsos: true },
     });
 

@@ -23,9 +23,11 @@ router.get('/', authenticateJWT, async (req, res) => {
 
     const university = await prisma.university.findUnique({
         where: {
-            superadminId: req.user.id,
+            superadminId: user.id,
         }
     });
+
+    if (!university) return res.status(404).json({ error: 'University not found' });
 
     const notifications = await prisma.notification.findMany({
         where: {

@@ -71,7 +71,7 @@ router.post('/request', authenticateJWT, async (req, res) => {
         }
     });
 
-    if (members.length < 4) return res.status(400).json({ error: 'There must be at least 4 members not including the admin to create an RSO.' });
+    if (memberObjects.length < 4) return res.status(400).json({ error: 'There must be at least 4 members not including the admin to create an RSO.' });
 
     const rso = await prisma.rSO.create({
         data: {
@@ -94,6 +94,9 @@ router.post('/request', authenticateJWT, async (req, res) => {
                 }),
             },
         },
+        include: {
+            members: true,
+        }
     });
 
     res.json(rso);

@@ -111,6 +111,7 @@ enum EventType {
   PUBLIC
   PRIVATE
   RSO
+  PENDING
 }
 
 model Comment {

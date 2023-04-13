@@ -135,4 +135,106 @@ router.post('/', authenticateJWT, async (req, res) => {
 
 });
 
+router.put('/:id/accept', authenticateJWT, async (req, res) => {
+    const notificationId = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    if (isNotElevatedAdmin(req.user.role)) {
+        return res.status(401).json({ error: 'You are not authorized to accept notifications' });
+    }
+
+    const notification = await prisma.user.findUnique({
+        where: { id: notificationId },
+    });
+    if (!notification) {
+        return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    let element;
+    if (notification.type.toUpperCase() === 'EVENT') {
+        element = await prisma.event.update({
+            where: { id: notification.eventId },
+            data: {
+                type: "PUBLIC",
+            }
+        });
+    }
+    else if (notification.type.toUpperCase() === 'RSO' || !type) {
+        element = await prisma.rSO.update({
+            where: { id: notification.rsoId },
+            data: {
+                status: "ACTIVE",
+            },
+        });
+
+        await prisma.user.update({
+            where: { id: notification.adminId },
+            data: {
+                role: "ADMIN",
+            }
+        });
+    } else {
+        return res.status(400).json({ error: 'The type parameter must be either "EVENT" or "RSO".'});
+    }
+
+    const deleteNotification = await prisma.notification.delete({
+        where: { id: notification.id },
+    })
+
+    const message = { message: "Notification successfully accepted and deleted." };
+
+    res.json({ message, deleteNotification, element });
+});
+
+router.put('/:id/decline', authenticateJWT, async (req, res) => {
+    const notificationId = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+    });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    if (isNotElevatedAdmin(req.user.role)) {
+        return res.status(401).json({ error: 'You are not authorized to accept notifications' });
+    }
+
+    const notification = await prisma.user.findUnique({
+        where: { id: notificationId },
+    });
+    if (!notification) {
+        return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    let element;
+    if (notification.type.toUpperCase() === 'EVENT') {
+        element = await prisma.event.update({
+            where: { id: notification.eventId },
+            data: {
+                type: "PRIVATE",
+            }
+        });
+    }
+    else if (notification.type.toUpperCase() === 'RSO' || !type) {
+        element = await prisma.rSO.delete({
+            where: { id: notification.rsoId },
+        });
+    } else {
+        return res.status(400).json({ error: 'The type parameter must be either "EVENT" or "RSO".'});
+    }
+
+    const deleteNotification = await prisma.notification.delete({
+        where: { id: notification.id },
+    })
+
+    const message = { message: "Notification successfully declined and deleted." };
+
+    res.json({ message, deleteNotification, element });
+});
+
 export default router;

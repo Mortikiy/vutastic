@@ -219,7 +219,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
     }
 
     // check if the new admin exists and is a member of the RSO
-    const newAdmin = await prisma.user.findUnique({
+    let newAdmin = await prisma.user.findUnique({
         where: { email: newAdminEmail },
         include: { rsos: true },
     });
@@ -232,7 +232,23 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'New admin user is not a member of the RSO' });
     }
 
-    await prisma.rSO.update({
+    if (user.role !== "SUPERADMIN" && user.role !== "SERVERADMIN") {
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: {
+                role: "STUDENT",
+            }
+        });
+    }
+
+    newAdmin = await prisma.user.update({
+        where: { email: newAdminEmail },
+        data: {
+            role: "USER",
+        }
+    });
+
+    const newRso = await prisma.rSO.update({
         where: { id: rso.id },
         data: {
             admin: {
@@ -244,7 +260,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
         }
     });
 
-    return res.status(200).json({ message: 'Ownership transferred successfully' });
+    return res.status(200).json({ message: 'Ownership transferred successfully', newRso, newAdmin });
 
 });
 

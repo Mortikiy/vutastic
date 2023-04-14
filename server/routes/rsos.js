@@ -232,11 +232,15 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'New admin user is not a member of the RSO' });
     }
 
-    if (user.role !== "SUPERADMIN" && user.role !== "SERVERADMIN") {
+    let oldAdmin = await prisma.user.findUnique({
+        where: { id: rso.adminId },
+    });
+
+    if (oldAdmin.role !== "SUPERADMIN" && oldAdmin.role !== "SERVERADMIN" && oldAdmin.admin.length === 1) {
         await prisma.user.update({
             where: { id: rso.adminId },
             data: {
-                role: "STUDENT",
+                role: "USER",
             }
         });
     }
@@ -244,7 +248,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
     newAdmin = await prisma.user.update({
         where: { email: newAdminEmail },
         data: {
-            role: "USER",
+            role: "ADMIN",
         }
     });
 

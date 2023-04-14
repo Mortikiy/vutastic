@@ -234,7 +234,11 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 
     let oldAdmin = await prisma.user.findUnique({
         where: { id: rso.adminId },
+        include: {
+            admin: true,
+        }
     });
+    
 
     if (oldAdmin.role !== "SUPERADMIN" && oldAdmin.role !== "SERVERADMIN" && oldAdmin.admin.length === 1) {
         await prisma.user.update({

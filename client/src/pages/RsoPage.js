@@ -3,7 +3,6 @@ import jwt_decode from 'jwt-decode';
 import './rsostyles.css';
 
 const RSOCard = ({ rso, handleJoin, handleLeave, handleTransferOwnership, userRsos, transferError, userId}) => {
-    console.log(userId);
     const isMember = userRsos.findIndex((member) => member.id === userId) !== -1;
     const isCurrentUserAdmin = rso.adminId === userId;
     const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -97,12 +96,20 @@ const RsoPage = () => {
       }),
     })
       .then((response) =>{
-        if (!response.ok)
-            setMessage(response.error);
-            throw new Error('silent');
+        if (response.status == 409)
+        {
+            setError('RSO name taken.');
+                throw new Error('silent');
+        }
+        else if (!response.ok)
+        {
+            setError('Please enter 4 student emails to request RSO.');
+                throw new Error('silent');
+        }
+        return response.json();
       })
-      .then((data) => {
-        setRsos([...rsos, data]);
+      .then((rso) => {
+        setRsos([...rsos, rso]);
         setShowCreateRsoForm(!showCreateRsoForm);
         setNewRsoName('');
         setNewRsoMembers([]);
@@ -116,7 +123,7 @@ const RsoPage = () => {
           },
           body: JSON.stringify({
             type: 'RSO',
-            rsoId: data.id,
+            rsoId: rso.id,
           }),
         })
           .then((response) => response.json())

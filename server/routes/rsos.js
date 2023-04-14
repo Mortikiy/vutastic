@@ -234,7 +234,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 
     if (user.role !== "SUPERADMIN" && user.role !== "SERVERADMIN") {
         await prisma.user.update({
-            where: { id: req.user.id },
+            where: { id: rso.adminId },
             data: {
                 role: "STUDENT",
             }

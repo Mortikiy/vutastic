@@ -178,7 +178,6 @@ router.put('/:id', authenticateJWT, async (req, res) => {
     res.json({ university, token });
 });
 
-
 router.delete('/:id', authenticateJWT, async (req, res) => {
     const id = parseInt(req.params.id);
 

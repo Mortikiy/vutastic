@@ -2,20 +2,50 @@ import React, { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
 import './rsostyles.css';
 
-const RSOCard = ({ rso, handleJoin, handleLeave, userRsos }) => {
-  const isMember = userRsos.some((userRso) => userRso.id === rso.id);
+const RSOCard = ({ rso, handleJoin, handleLeave, handleTransferOwnership, userRsos, transferError, userId}) => {
+    console.log(userId);
+    const isMember = userRsos.findIndex((member) => member.id === userId) !== -1;
+    const isCurrentUserAdmin = rso.adminId === userId;
+    const [newAdminEmail, setNewAdminEmail] = useState('');
+    const error = transferError;
 
-  return (
-    <div className="rso-card">
-      <h3>{rso.name}</h3>
-      {isMember ? (
-        <button onClick={() => handleLeave(rso)}>Leave</button>
-      ) : (
-        <button onClick={() => handleJoin(rso)}>Join</button>
-      )}
-    </div>
-  );
-};
+    const handleInputChange = (e) => {
+      setNewAdminEmail(e.target.value);
+    };
+  
+    const handleTransferOwnershipClick = () => {
+      handleTransferOwnership(rso.id, newAdminEmail);
+    };
+  
+    return (
+      <div className="rso-card">
+        <h3>{rso.name}</h3>
+        <h4>Number of members: {rso.members.length}</h4>
+        <h4>Admin name: {rso.admin.firstName}</h4>
+        <br></br>
+        {isCurrentUserAdmin ? (
+          <div>
+            <label htmlFor="new-admin-email">New Admin Email: </label>
+            <input type="email" id="new-admin-email" value={newAdminEmail} onChange={handleInputChange} />
+            <button style={{backgroundColor: 'lime'}} onClick={handleTransferOwnershipClick}>Transfer Ownership</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+          </div>
+        ) : (
+          isMember && (
+            <button style={{ backgroundColor: 'red' }} onClick={() => handleLeave(rso)}>
+              Leave
+            </button>
+          ) || (
+            <button onClick={() => handleJoin(rso)}>
+              Join
+            </button>
+          )
+        )}
+      </div>
+    );
+  };
+  
+
 
 const RsoPage = () => {
   const [rsos, setRsos] = useState([]);
@@ -25,7 +55,10 @@ const RsoPage = () => {
   const [error, setError] = useState('');
   const [userRsos, setUserRsos] = useState([]);
   const [refresh, setRefresh] = useState(false);
-
+  const [message, setMessage] = useState('');
+  const [errorBoxId, setErrorBoxId] = useState();
+  const [transferError, setTransferError] = useState();
+  const [token, setToken] = useState(jwt_decode(localStorage.getItem('token')));
   function handleTokenChange(newToken)
   {
     localStorage.setItem('token', newToken);
@@ -40,13 +73,15 @@ const RsoPage = () => {
         },
         })
       .then((response) => response.json())
-      .then((data) => {setRsos(data);})
+      .then((data) => {setRsos(data)})
       .catch((error) => console.error(error));
   }, [refresh]);
 
   const handleCreateRso = () => {
     const token = localStorage.getItem('token');
-    if (newRsoMembers.length < 4) {
+    // Strip spaces from members' email addresses
+    const strippedMembers = newRsoMembers.map((member) => member.trim());
+    if (strippedMembers.length < 4) {
       setError('Error creating RSO: not enough members');
       return;
     }
@@ -58,10 +93,14 @@ const RsoPage = () => {
       },
       body: JSON.stringify({
         name: newRsoName,
-        members: newRsoMembers,
+        members: strippedMembers,
       }),
     })
-      .then((response) => response.json())
+      .then((response) =>{
+        if (!response.ok)
+            setMessage(response.error);
+            throw new Error('silent');
+      })
       .then((data) => {
         setRsos([...rsos, data]);
         setShowCreateRsoForm(!showCreateRsoForm);
@@ -69,62 +108,103 @@ const RsoPage = () => {
         setNewRsoMembers([]);
         setRefresh(!refresh);
         // Create notification
-      fetch('/api/notifications/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify({
-          type: 'RSO',
-          rsoId: data.id,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {console.log(data);})
-        .catch((error) => {
-          console.error(error);
-        });
+        fetch('/api/notifications/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            type: 'RSO',
+            rsoId: data.id,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       })
       .catch((error) => {
+        if (error.message.includes("silent"))
+            return;
         console.error(error);
         setError('Error creating RSO. Make sure you enter 4 student emails.');
       });
-  };
 
+        setMessage('Successful request!');
+        setTimeout(() => {
+          setMessage('');
+        }, 3000);
+  };
+  
   const handleJoinRso = (rso) => {
-    fetch(`/api/rsos/${rso.id}/members`, {
-      method: 'POST',
+    fetch(`/api/rsos/${rso.id}/join`, {
+      method: 'PUT',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: localStorage.getItem('token'),
       },
     })
       .then((response) => {
         if (response.ok) {
           setUserRsos([...userRsos, rso]);
+          setRefresh(!refresh);
         } else {
           throw new Error('Error joining RSO');
         }
       })
       .catch((error) => console.error(error));
-  };
+};
+
 
   const handleLeaveRso = (rso) => {
-    fetch(`/api/rsos/${rso.id}/members`, {
-      method: 'DELETE',
+    fetch(`/api/rsos/${rso.id}/leave`, {
+      method: 'PUT',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: localStorage.getItem('token'),
       },
     })
       .then((response) => {
         if (response.ok) {
           setUserRsos(userRsos.filter((userRso) => userRso.id !== rso.id));
+          setRefresh(!refresh);
         } else {
           throw new Error('Error leaving RSO');
         }
       })
       .catch((error) => console.error(error));
   };
+
+  const handleTransferOwnership = async (rsoId, newAdminEmail) => {
+    try {
+      const response = await fetch(`/api/rsos/${rsoId}/transfer-ownership`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token'),
+        },
+        body: JSON.stringify({ newAdminEmail }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Ownership transferred successfully, do something here
+        setRefresh(!refresh);
+        setTimeout(() => {
+            setError('');
+          }, 3000);
+      } else {
+        // Error transferring ownership, display error message
+        setTransferError(data.error);
+        setErrorBoxId(rsoId);
+        // or you could set some state with the error message to display it on the page
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle network error here
+    }
+  };
+  
 
   return (
     <div className="rso-page-container">
@@ -141,17 +221,21 @@ const RsoPage = () => {
             rso={rso}
             handleJoin={handleJoinRso}
             handleLeave={handleLeaveRso}
-            userRsos={userRsos}
+            userRsos={rso.members}
+            handleTransferOwnership={handleTransferOwnership}
+            transferError={rso.id === errorBoxId ? transferError : null}
+            userId={token.userId}
             />
         ))}
         </div>
       )}
       {(
         <div className="create-rso-container">
-            {showCreateRsoForm === false ?
+            {showCreateRsoForm === false ?<div>
           <button className="create-rso-button" onClick={() => setShowCreateRsoForm(!showCreateRsoForm)}>
             Request RSO
           </button>
+          <p style={{color: 'green', display: 'block'}}>{message}</p></div>
           :  <button className="create-rso-button" style={{backgroundColor: 'red'}} onClick={() => setShowCreateRsoForm(!showCreateRsoForm)}>
           Cancel
         </button>}
@@ -173,7 +257,7 @@ const RsoPage = () => {
                 />
               </label>
               <label className="create-rso-label" style={{marginLeft: "10px"}}>
-                Member emails (seperate with commas):
+                4 Student member emails (seperate with commas):
                 <input
                   style={{marginLeft: "5px"}}
                   type="text"
@@ -190,6 +274,7 @@ const RsoPage = () => {
           </form>
         </div>
       )}
+      <br></br><br></br>
     </div>
   );
 }

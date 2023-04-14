@@ -79,9 +79,13 @@ function Login(props)
           {
             navigate('/superadmin');
           }
-          else
+          else if (decoded.role === 'USER')
           {
             navigate('/student');
+          }
+          else
+          {
+            navigate('/studentadmin');
           }
       })
       .catch((error) => 

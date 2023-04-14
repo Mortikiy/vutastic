@@ -22,7 +22,24 @@ router.get('/', authenticateJWT, async (req, res) => {
     try {
         const rsos = await prisma.rSO.findMany({
             where: { universityId: university.id },
-        });
+            include: {
+              members: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  role: true,
+                },
+              },
+              admin: {
+                select: {
+                  id: true,
+                  firstName: true,
+                },
+              },
+            },
+          });          
 
         res.json(rsos);
     } catch (error) {
@@ -180,7 +197,7 @@ router.put('/:id/join', authenticateJWT, async(req, res) => {
 // Allows an admin to make another member of their RSO an admin
 router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
     const { newAdminEmail } = req.body;
-
+    const id = parseInt(req.params.id);
     const user = await prisma.user.findUnique({
         where: { id: req.user.id },
     });
@@ -189,7 +206,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
     }
 
     const rso = await prisma.rSO.findUnique({
-        where: { id },
+        where: { id: id },
         include: { members: true }
     });
 

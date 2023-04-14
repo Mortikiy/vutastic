@@ -7,6 +7,7 @@ import SuperAdminPage from './pages/SuperAdminPage';
 import University from './components/University';
 import RsoPage from './pages/RsoPage';
 import Requests from './pages/Requests';
+import AdminHome from './pages/AdminHome';
 class App extends Component {
 state = {
     data: null
@@ -40,6 +41,7 @@ state = {
                 <Route path="/superadmin/requests" index element ={<Requests/>}/>
                 <Route path="/student" index element ={<HomePage/>}/>
                 <Route path="/student/rso" index element ={<RsoPage/>}/>
+                <Route path="/studentadmin" index element ={<AdminHome/>}/>
             </Routes>
         </BrowserRouter>
         );

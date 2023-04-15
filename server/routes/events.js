@@ -52,7 +52,8 @@ router.get('/', authenticateJWT, async (req, res) => {
         events.push(...privateEvents)
     }
 
-    const rsoEvents = user.rsos.flatMap((rso) => rso.events);
+    let rsoEvents = user.rsos.flatMap((rso) => rso.events);
+    rsoEvents = rsoEvents.filter(event => event.type === 'RSO');
     events.push(...rsoEvents)
 
     res.json(events);

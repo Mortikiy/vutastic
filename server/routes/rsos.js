@@ -276,7 +276,7 @@ router.put('/:id/transfer-ownership', authenticateJWT, async(req, res) => {
 // UNTESTED - IT LOOKS LIKE A MESS RIGHT NOW
 router.post('/:id/events', authenticateJWT, async (req, res) => {
     const { name, category, description, type, startTime, endTime, latitude, longitude, locationName, contactPhone, contactEmail } = req.body;
-    const { id } = req.params;
+    const id= parseInt(req.params.id);
 
     const user = await prisma.user.findUnique({
         where: { id: req.user.id },

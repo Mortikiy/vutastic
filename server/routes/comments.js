@@ -8,6 +8,9 @@ router.get('/:id', async (req, res) => {
     const comment = await prisma.comment.findUnique({
         where: {
             id: parseInt(req.params.id),
+        },
+        include: {
+            author: true,
         }
     });
     res.json(comment);
@@ -17,6 +20,9 @@ router.get('/events/:event_id', async (req, res) => {
     const comments = await prisma.comment.findMany({
         where: {
             eventId: parseInt(req.params.event_id),
+        },
+        include: {
+            author: true,
         }
     });
     res.json(comments);
@@ -48,6 +54,9 @@ router.post('/', authenticateJWT, async (req, res) => {
                 },
                 rating,
             },
+            include: {
+                author: true,
+            }
         });
 
     res.json(comment);

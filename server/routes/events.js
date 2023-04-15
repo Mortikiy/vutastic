@@ -32,6 +32,9 @@ router.get('/', authenticateJWT, async (req, res) => {
     const publicEvents = await prisma.event.findMany({
         where: {
             type: "PUBLIC",
+        },
+        include: {
+            location: true,
         }
     })
 
@@ -39,6 +42,9 @@ router.get('/', authenticateJWT, async (req, res) => {
         where: {
             id: user.universityId,
         },
+        include: {
+            events: true,
+        }
     });
 
     const events = [...publicEvents];
@@ -63,6 +69,7 @@ router.get('/:id', async (req, res) => {
             attendees: true,
             rso: true,
             comments: true,
+            location: true,
         }
     });
     res.json(event);

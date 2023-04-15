@@ -11,6 +11,10 @@ generator client {
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
+generator dbml {
+    provider = "prisma-dbml-generator"
+}
+
 model University {
   id            Int            @id @default(autoincrement())
   name          String         @unique

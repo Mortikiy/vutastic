@@ -1,0 +1,168 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table University {
+  id Int [pk, increment]
+  name String [unique, not null]
+  location Location [not null]
+  locationId Int [unique, not null]
+  description String
+  picture String
+  superadmin User [not null]
+  superadminId Int [unique, not null]
+  students User [not null]
+  numStudents Int [not null, default: 0]
+  rsos RSO [not null]
+  events Event [not null]
+  notifications Notification [not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  email String [unique, not null]
+  password String [not null]
+  role Role [not null, default: 'USER']
+  superadmin University
+  university University
+  universityId Int
+  rsos RSO [not null]
+  admin RSO [not null]
+  events Event [not null]
+  hostEvents Event [not null]
+  comments Comment [not null]
+  adminNotif Notification [not null]
+}
+
+Table RSO {
+  id Int [pk, increment]
+  name String [unique, not null]
+  admin User [not null]
+  adminId Int [not null]
+  members User [not null]
+  status RsoStatus [not null, default: 'PENDING']
+  university University [not null]
+  universityId Int [not null]
+  events Event [not null]
+  createRso Notification
+}
+
+Table Event {
+  id Int [pk, increment]
+  name String [not null]
+  category String [not null]
+  description String
+  startTime DateTime [not null]
+  endTime DateTime [not null]
+  location Location [not null]
+  locationId Int [not null]
+  contactPhone String
+  contactEmail String
+  university University [not null]
+  universityId Int [not null]
+  type EventType [not null, default: 'RSO']
+  rso RSO
+  rsoId Int
+  attendees User [not null]
+  host User [not null]
+  hostId Int [not null]
+  comments Comment [not null]
+  publicNotif Notification
+
+  indexes {
+    (startTime, locationId) [unique]
+  }
+}
+
+Table Location {
+  id Int [pk, increment]
+  name String
+  latitude Float [not null]
+  longitude Float [not null]
+  event Event [not null]
+  university University
+
+  indexes {
+    (longitude, latitude) [unique]
+  }
+}
+
+Table Comment {
+  id Int [pk, increment]
+  text String [not null]
+  author User [not null]
+  authorId Int [not null]
+  eventId Int [not null]
+  event Event [not null]
+  rating Int [not null]
+}
+
+Table Notification {
+  id Int [pk, increment]
+  type NotifType [not null, default: 'RSO']
+  university University [not null]
+  universityId Int [not null]
+  rso RSO
+  rsoId Int [unique]
+  admin User [not null]
+  adminId Int [not null]
+  event Event
+  eventId Int [unique]
+}
+
+Enum Role {
+  SERVERADMIN
+  SUPERADMIN
+  ADMIN
+  USER
+}
+
+Enum RsoStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+Enum EventType {
+  PUBLIC
+  PRIVATE
+  RSO
+  PENDING
+}
+
+Enum NotifType {
+  RSO
+  EVENT
+}
+
+Ref: University.locationId - Location.id
+
+Ref: University.superadminId - User.id
+
+Ref: User.universityId - University.id
+
+Ref: RSO.adminId > User.id
+
+Ref: RSO.universityId > University.id
+
+Ref: Event.locationId > Location.id
+
+Ref: Event.universityId > University.id
+
+Ref: Event.rsoId > RSO.id
+
+Ref: Event.hostId > User.id
+
+Ref: Comment.authorId > User.id
+
+Ref: Comment.eventId > Event.id
+
+Ref: Notification.universityId > University.id
+
+Ref: Notification.rsoId - RSO.id
+
+Ref: Notification.adminId > User.id
+
+Ref: Notification.eventId - Event.id

@@ -11,19 +11,15 @@ router.get('/', authenticateJWT, async (req, res) => {
             id: userId,
         },
         include: {
-            university: {
-                include: {
-                    events: true,
-                    rsos: {
-                        include: {
-                            events: true,
-                        },
-                    },
-                },
-            },
             rsos: {
                 include: {
-                    events: true,
+                    events: {
+                        include: {
+                            location: true,
+                            attendees: true,
+                            host: true,
+                        }
+                    }
                 },
             },
         },
@@ -35,6 +31,8 @@ router.get('/', authenticateJWT, async (req, res) => {
         },
         include: {
             location: true,
+            attendees: true,
+            host: true,
         }
     })
 
@@ -67,6 +65,7 @@ router.get('/:id', async (req, res) => {
         },
         include: {
             attendees: true,
+            host: true,
             rso: true,
             comments: true,
             location: true,

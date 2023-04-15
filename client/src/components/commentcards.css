@@ -1,0 +1,110 @@
+.star-container {
+    display: inline-block;
+    font-size: 0; /* remove whitespace between inline-block elements */
+  }
+  
+  .star {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 2px;
+    background-color: gray;
+    clip-path: polygon(
+      50% 0%,
+      61% 35%,
+      98% 35%,
+      68% 57%,
+      79% 91%,
+      50% 70%,
+      21% 91%,
+      32% 57%,
+      2% 35%,
+      39% 35%
+    );
+  }
+  
+  .star.full {
+    background-color: gold;
+  }
+  
+  .star.half {
+    background-color: linear-gradient(to right, gold 50%, gray 50%);
+  }
+  
+  .star.empty {
+    background-color: gray;
+  }
+
+  .comment-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .comment-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .comment-header h3 {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .comment-actions {
+    display: flex;
+    justify-content: right;
+  }
+  
+  .comment-action {
+    padding: 5px 10px;
+    background-color: #1e90ff;
+    color: white;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-right: 5px;
+  }
+  
+  .comment-action:hover {
+    background-color: #0077b6;
+    cursor: pointer;
+  }
+  
+  .comment-action.delete {
+    background-color: #dc3545;
+    margin-right: 10px;
+  }
+  
+  .comment-action.delete:hover {
+    background-color: #c82333;
+  }
+
+  .savebutton {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  
+  .cancelbutton {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  

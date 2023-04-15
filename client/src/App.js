@@ -5,9 +5,11 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import SuperAdminPage from './pages/SuperAdminPage';
 import University from './components/University';
+import EventCard from './components/EventCard';
 import RsoPage from './pages/RsoPage';
 import Requests from './pages/Requests';
 import AdminHome from './pages/AdminHome';
+import EventPage from './pages/EventPage';
 class App extends Component {
 state = {
     data: null
@@ -42,6 +44,7 @@ state = {
                 <Route path="/student" index element ={<HomePage/>}/>
                 <Route path="/student/rso" index element ={<RsoPage/>}/>
                 <Route path="/studentadmin" index element ={<AdminHome/>}/>
+                <Route path="/superadmin/events" index element ={<EventPage/>}/>
             </Routes>
         </BrowserRouter>
         );

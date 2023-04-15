@@ -38,6 +38,12 @@ function SuperAdminPage() {
       return;
     }
 
+    const goEvent = () =>
+    {
+      navigate('/superadmin/events');
+      return;
+    }
+
     const signOut = () =>
     {
         localStorage.removeItem('token');
@@ -59,7 +65,7 @@ function SuperAdminPage() {
       <button className="button" onClick={goRSO}>
         RSOs
       </button>
-      <button className="button">
+      <button className="button" onClick={goEvent}>
         Events
       </button>
       <button  id="logoff" className="button" onClick={signOut}>

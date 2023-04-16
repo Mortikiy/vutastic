@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import './commentcards.css';
 
-function CommentCard({ comment, callRefresh }) {
+function CommentCard({ comment, callRefresh, hostId }) {
     const { text, author, rating } = comment;
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(text);
@@ -13,6 +13,8 @@ function CommentCard({ comment, callRefresh }) {
     const fullStars = Math.floor(isEditing ? editedRating : rating);
     const halfStars = Math.ceil((isEditing ? editedRating : rating) - fullStars);
     const emptyStars = 5 - fullStars - halfStars;
+    const isAdmin = (currentUser.role === 'SUPERADMIN' || currentUser.role ==='SERVERADMIN');
+    const isEventOwner = (hostId && hostId === currentUser.userId);
   
     // Create an array of stars to display
     const stars = [];
@@ -115,7 +117,7 @@ function CommentCard({ comment, callRefresh }) {
             ) : (
                 <p>{text}</p>
             )}
-            {(isCommentOwner && comment.id) && (
+            {((isCommentOwner || isAdmin || isEventOwner) && comment.id) && (
                 <div className="comment-actions">
                     <button className="comment-action delete" onClick={() => handleDelete(comment.id)}>Delete</button>
                     {isEditing ? <></>:

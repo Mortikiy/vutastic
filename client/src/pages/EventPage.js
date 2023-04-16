@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import EventCard from '../components/EventCard';
+import EventForm from '../components/EventForm';
 import './eventpagestyles.css';
 
 function EventPage() {
@@ -10,8 +11,25 @@ function EventPage() {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState('All');
   const [refresh, setRefresh] = useState(false);
+  const [message, setMessage] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false); // new state variable to control display of form
   let user = jwt_decode(localStorage.getItem('token'));
 
+  function refreshData()
+  {
+    setRefresh(!refresh);
+    setRefresh(!refresh);
+  }
+  function messageShowFunction()
+  {
+    setMessage('Success!');
+    setTimeout(() => {
+      setMessage('');
+    }, 3000);
+  }
+  function handleShow(){
+    setShowCreateForm(false);
+  }
   useEffect(() => {
     let myToken = localStorage.getItem('token');
           // To login page if no token
@@ -30,7 +48,7 @@ function EventPage() {
         },
       })
       .then((response) => response.json())
-      .then((data) => {setEvents(data);})
+      .then((data) => {setEvents(data); console.log(data);})
       .catch((error) => console.error(error));
 
     // Check if the current user is an admin or superadmin
@@ -42,7 +60,7 @@ function EventPage() {
   }, [refresh]);
 
   const handleCreateEvent = () => {
-    navigate('/create-event');
+    setShowCreateForm(true); // show the form when the button is clicked
   };
 
   const handleFilterChange = (event) => {
@@ -103,9 +121,20 @@ function EventPage() {
   return (
     <div className="event-page">
       {isAdmin && (
-        <button className='button-create-event' onClick={handleCreateEvent}>Create Event</button>
+        <>
+        {!showCreateForm ? <button className="button-create-event" onClick={() => setShowCreateForm(true)}>
+          Create Event
+        </button> : <><br></br><button id='cancelbutton' onClick={() => setShowCreateForm(false)}>Cancel</button><br></br></>}
+        </>
       )}
-      <div className="filter-section">
+      {showCreateForm ? (
+        <div className="create-event-form">
+          <EventForm callCancel={handleShow} handleSuccess={messageShowFunction} callRefresh={refreshData}/>
+          <br></br>
+        </div>
+      ) : (
+        <>
+        <div className="filter-section">
         <label htmlFor="filter">Filter by:</label>
         <select id="filter" value={filter} onChange={handleFilterChange}>
           <option value="All">All</option>
@@ -114,13 +143,27 @@ function EventPage() {
           <option value="Public">Public</option>
         </select>
       </div>
-      <div className="events-container">
-        {filteredEvents.length === 0 ? <div>No events to display!</div> : filteredEvents.map((event) => (
-          <EventCard key={event.id} event={event} handleLeaveAPI={handleLeaveAPI} handleJoinAPI={handleJoinAPI} userId={user.userId}/>
-        ))}
-      </div>
+        <div className="events-container">
+          {filteredEvents.length === 0 ? (
+            <div>No events to display!</div>
+          ) : (
+            filteredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                handleLeaveAPI={handleLeaveAPI}
+                handleJoinAPI={handleJoinAPI}
+                userId={user.userId}
+              />
+            ))
+          )}
+        </div>
+        <p style={{color: 'green', fontSize: '2em'}}>{message}</p>
+        </>
+      )}
     </div>
   );
+  
 }
 
 export default EventPage;

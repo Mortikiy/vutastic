@@ -1,0 +1,83 @@
+
+.create-event-form{
+    width: 100%;
+}
+.event-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .event-form h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .event-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .event-form input[type="text"],
+  .event-form input[type="email"],
+  .event-form textarea,
+  .event-form select {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  .event-form input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  
+  .event-form .event-type {
+    margin-bottom: 15px;
+  }
+  
+  .event-form .public-event label {
+    margin-left: 5px;
+  }
+  
+  .event-form .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .event-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .event-form button.cancel-button {
+    background-color: #f44336;
+  }
+  
+  .event-form button:hover {
+    background-color: #0069d9;
+  }
+  
+  .event-form button.cancel-button:hover {
+    background-color: #d50000;
+  }
+  
+  .event-form button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  

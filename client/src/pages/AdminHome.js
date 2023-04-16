@@ -32,6 +32,12 @@ function AdminHome() {
         navigate('/');
         return;
     }
+    
+    const goEvent = () =>
+    {
+      navigate('/studentadmin/events');
+      return;
+    }
 
   return (
     <div id="root">
@@ -41,7 +47,7 @@ function AdminHome() {
       <button className="button" onClick={goRSO}>
         RSOs
       </button>
-      <button className="button">
+      <button className="button" onClick={goEvent}>
         Events
       </button>
       <button  id="logoff" className="button" onClick={signOut}>

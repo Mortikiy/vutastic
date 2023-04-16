@@ -16,7 +16,6 @@ function Signup(props) {
     setShowPassword(!showPassword);
     setConfirm(!confirm);
     }
-
     useEffect (() => {
       fetch('/api/universities/', {
         method: 'GET',

@@ -32,6 +32,11 @@ function HomePage() {
         navigate('/');
         return;
     }
+    const goEvent = () =>
+    {
+      navigate('/student/events');
+      return;
+    }
 
   return (
     <div id="root">
@@ -41,7 +46,7 @@ function HomePage() {
       <button className="button" onClick={goRSO}>
         RSOs
       </button>
-      <button className="button">
+      <button className="button" onClick={goEvent}>
         Events
       </button>
       <button  id="logoff" className="button" onClick={signOut}>

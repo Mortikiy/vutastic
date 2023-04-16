@@ -74,7 +74,6 @@ router.post('/', authenticateJWT, async (req, res) => {
                 id: eventId,
             },
         });
-
         if (!event) return res.status(404).json({ error: 'The event specified does not exist.'});
         if (user.id !== event.hostId) return res.status(403).json({ error: 'User is not the host of the event specified.' });
 

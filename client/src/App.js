@@ -36,14 +36,15 @@ state = {
         <BrowserRouter forceRefresh={true}>
             <Routes>
                 <Route path="/" index element={<LoginPage/>} />
-                
                 <Route path="/superadmin" index element={<SuperAdminPage/>}/>
                 <Route path="/superadmin/university" index element={<University/>}/>
                 <Route path="/superadmin/rso" index element ={<RsoPage/>}/>
                 <Route path="/superadmin/requests" index element ={<Requests/>}/>
                 <Route path="/student" index element ={<HomePage/>}/>
                 <Route path="/student/rso" index element ={<RsoPage/>}/>
+                <Route path="/student/events" index element ={<EventPage/>}/>
                 <Route path="/studentadmin" index element ={<AdminHome/>}/>
+                <Route path="/studentadmin/events" index element ={<EventPage/>}/>
                 <Route path="/superadmin/events" index element ={<EventPage/>}/>
             </Routes>
         </BrowserRouter>

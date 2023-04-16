@@ -14,7 +14,9 @@ function CreateUniversity(props) {
   const [center, setCenter] = useState({
     lat: 28.5383, lng: -81.3792 
  });
-
+ const { isLoaded } = useLoadScript({
+  googleMapsApiKey: 'AIzaSyCrFIHwRBR5zA5mtIUvbBSHzWWEmaZ5FtU'
+});
 
   const handleMapClick = event => {
     setLocation({ latitude: event.latLng.lat(), longitude: event.latLng.lng() });
@@ -146,13 +148,10 @@ function CreateUniversity(props) {
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <LoadScript
-        googleMapsApiKey="AIzaSyCrFIHwRBR5zA5mtIUvbBSHzWWEmaZ5FtU"
-        libraries={["places"]}
-        >
      <div>
     <div id="map-container">
     <label className="form-label">Location: </label>
+    {!isLoaded ? <div>Loading...</div> :
       <GoogleMap
         center= {(location == null) ? center : location}
         mapContainerStyle={containerStyle}
@@ -160,7 +159,7 @@ function CreateUniversity(props) {
         onClick={handleMapClick}
       >
       {<MarkerF position={center} />}
-      </GoogleMap>
+      </GoogleMap>}
     </div>
     {location && (
       <input
@@ -172,7 +171,6 @@ function CreateUniversity(props) {
       />
     )}
   </div>
-</LoadScript>
 <div>
 <p>Or enter address (Street, City, Zip): </p> <input style={{display: "inline", width: "70%"}} type="text" value={address} id="address" name="address" onChange={(event) => setAddress(event.target.value)}></input>
 <button id = "mapbutton" style ={{display: "inline", width: "25%", marginLeft: "5%"}} onClick={handleAddress}>Search Address</button>

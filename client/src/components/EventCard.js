@@ -9,7 +9,6 @@ const EventCard = ({ event, userId, handleJoinAPI, handleLeaveAPI }) => {
   const [rating, setRating] = useState(0);
   const [commentText, setCommentText] = useState('');
   const [showCommentModal, setShowCommentModal] = useState(false);
-
   function callNewComments()  
   {
     setCommentRefresh(!commentRefresh);
@@ -96,8 +95,9 @@ const EventCard = ({ event, userId, handleJoinAPI, handleLeaveAPI }) => {
         <h6 className="new-card-subtitle mb-2 text-muted"><span style={{fontWeight: 'bold', display: 'inline-block', color:'black'}}>Start: </span>{formattedTime}<br></br><span style={{fontWeight: 'bold', display: 'inline', color:'black'}}>End: </span>{formattedTime2}</h6>
         <h5 className="new-card-title"><label style={{fontWeight: 'bold'}}>Host: </label>{event.host.firstName} {event.host.lastName}</h5>
         <p className="new-card-text">Member count: {event.attendees.length}</p>
+        <p className="new-card-text">Host email: {event.contactEmail}</p>
+        <p className="new-card-text">Host phone: {event.contactPhone}</p>
         <p className="new-card-text">Description: </p><p className="new-card-text">{event.description}</p>
-        <br></br>
         {isJoined ? (
           <button className="btn btn-danger" style={{color: 'white'}} onClick={handleLeave}>Leave</button>
         ) : (
@@ -108,7 +108,7 @@ const EventCard = ({ event, userId, handleJoinAPI, handleLeaveAPI }) => {
             <h4>Comments:</h4>
           </div>
           <div style={{ height: '150px', padding: '10px', overflowY: 'scroll', border: '3px solid black', borderRadius: '5px', scrollbarWidth: 'thin', scrollbarColor: 'grey'}}>
-            {comments.length === 0 ? <div>No comments yet!</div> : comments.map(comment => <CommentCard key={comment.id} comment={comment} callRefresh={callNewComments}/>)}
+            {comments.length === 0 ? <div>No comments yet!</div> : comments.map(comment => <CommentCard key={comment.id} comment={comment} callRefresh={callNewComments} hostId={event.hostId}/>)}
           </div>
           {showCommentModal ? (
             <div style={{ marginTop: '20px' }}>

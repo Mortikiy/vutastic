@@ -20,7 +20,8 @@ const RSOCard = ({ rso, handleJoin, handleLeave, handleTransferOwnership, userRs
       <div className="rso-card">
         <h3>{rso.name}</h3>
         <h4>Number of members: {rso.members.length}</h4>
-        <h4>Admin name: {rso.admin.firstName}</h4>
+        <h4>Admin: {rso.admin.firstName}</h4>
+        <h5 style={{marginTop: '5px'}}>Status: {rso.status}</h5>
         <br></br>
         {isCurrentUserAdmin ? (
           <div>
@@ -204,7 +205,6 @@ const RsoPage = () => {
         // Error transferring ownership, display error message
         setTransferError(data.error);
         setErrorBoxId(rsoId);
-        // or you could set some state with the error message to display it on the page
       }
     } catch (error) {
       console.error(error);
@@ -215,14 +215,14 @@ const RsoPage = () => {
 
   return (
     <div className="rso-page-container">
-      <h1 className="rso-page-title">Registered Student Organizations (RSOs)</h1>
-      {rsos === [] ? (
+      <h1 className="rso-page-title" style={{textAlign: 'center'}}>Registered Student Organizations (RSOs)</h1>
+      {rsos.length <= 0 ? (
         <div className="no-rso-container">
-          <p className="no-rso-message">No RSOs</p>
+          <h3 className="no-rso-message">No RSOs</h3>
         </div>
       ) : (
         <div className="rso-cards-container">
-        {rsos.filter((rso) => rso.status === 'ACTIVE').map((rso) => (
+        {rsos.map((rso) => (
             <RSOCard
             key={rso.id}
             rso={rso}

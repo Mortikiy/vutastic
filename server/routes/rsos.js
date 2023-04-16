@@ -127,7 +127,7 @@ router.put('/:id/leave', authenticateJWT, async(req, res) => {
         return res.status(404).json({ error: 'User not found.' });
     }
 
-    const rso = await prisma.rSO.findUnique({
+    let rso = await prisma.rSO.findUnique({
         where: { id },
         include: { members: true }
     });
@@ -152,12 +152,20 @@ router.put('/:id/leave', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'User is not a member of this RSO' });
     }
 
-    await prisma.rSO.update({
-        where: { id: rso.id },
-        data: { members: { disconnect: { id: user.id } } },
-    });
+    if (rso.members.length === 5) {
+        rso = await prisma.rSO.update({
+            where: { id: rso.id },
+            data: { members: { disconnect: { id: user.id } }, status: 'INACTIVE' },
+        });
+    }
+    else {
+        rso = await prisma.rSO.update({
+            where: { id: rso.id },
+            data: { members: { disconnect: { id: user.id } } },
+        });
+    }
 
-    return res.status(200).json({ message: 'Successfully left RSO' });
+    return res.status(200).json({ message: 'Successfully left RSO', rso });
 
 });
 
@@ -172,7 +180,7 @@ router.put('/:id/join', authenticateJWT, async(req, res) => {
         return res.status(404).json({ error: 'User not found.' });
     }
 
-    const rso = await prisma.rSO.findUnique({
+    let rso = await prisma.rSO.findUnique({
         where: { id },
         include: { members: true }
     });
@@ -185,12 +193,20 @@ router.put('/:id/join', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'User is not a member of this RSO' });
     }
 
-    await prisma.rSO.update({
-        where: { id: rso.id },
-        data: { members: { connect: { id: user.id } } },
-    });
+    if (rso.members.length === 4) {
+        rso = await prisma.rSO.update({
+            where: { id: rso.id },
+            data: { members: { connect: { id: user.id } }, status: 'ACTIVE' },
+        });
+    }
+    else {
+        rso = await prisma.rSO.update({
+            where: { id: rso.id },
+            data: { members: { connect: { id: user.id } } },
+        });
+    }
 
-    return res.status(200).json({ message: 'Successfully joined RSO' });
+    return res.status(200).json({ message: 'Successfully joined RSO', rso });
 
 });
 
@@ -298,6 +314,31 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
         return res.status(403).json({ error: 'User is not an admin of the RSO' });
     }
 
+    const queryEvents = await prisma.event.findMany({
+        where: {
+            location: {
+                coordinates: {
+                    longitude,
+                    latitude,
+                },
+            },
+        },
+    });
+
+    queryEvents.forEach(event => {
+        if (startTime < event.endTime && event.startTime < endTime) {
+            let latLetter = 'N';
+            let longLetter = 'E';
+            if (latitude < 0) latLetter = 'S';
+            if (longitude < 0) longLetter = 'W';
+
+            return res.status(409).json({
+                error: `Event at ${Math.abs(latitude)} ${latLetter} ${Math.abs(longitude)} ${longLetter} 
+                        overlaps with another event happening between ${event.startTime} and ${event.endTime}.`
+            });
+        }
+    });
+
     const event = await prisma.event.create({
         data: {
             name,
@@ -308,8 +349,10 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
             location: {
                 connectOrCreate: {
                     where: {
-                        longitude,
-                        latitude,
+                        coordinates: {
+                            longitude,
+                            latitude,
+                        },
                     },
                     create: {
                         longitude,

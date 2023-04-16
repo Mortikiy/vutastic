@@ -176,16 +176,16 @@ router.put('/:id/accept', authenticateJWT, async (req, res) => {
         
         const newuser = await prisma.user.findUnique({
             where: { id: notification.adminId },
-          });
-          
-          if (newuser.role === "USER") {
+        });
+        
+        if (newuser.role === "USER") {
             await prisma.user.update({
-              where: { id: notification.adminId },
-              data: {
-                role: "ADMIN",
-              },
+                where: { id: notification.adminId },
+                data: {
+                    role: "ADMIN",
+                },
             });
-          }     
+        }
     } else {
         return res.status(400).json({ error: 'The type parameter must be either "EVENT" or "RSO".'});
     }

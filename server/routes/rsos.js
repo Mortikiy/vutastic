@@ -376,9 +376,9 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
             location: {
                 connectOrCreate: {
                     where: {
-                        longitude_latitude: {
-                            longitude,
-                            latitude,
+                        coordinates: {
+                            longitude: longitude,
+                            latitude: latitude,
                         },
                     },
                     create: {

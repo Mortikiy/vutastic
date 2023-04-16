@@ -366,20 +366,6 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
         }
     }
 
-    queryEvents.forEach(event => {
-        if (startTime < event.endTime && event.startTime < endTime) {
-            let latLetter = 'N';
-            let longLetter = 'E';
-            if (latitude < 0) latLetter = 'S';
-            if (longitude < 0) longLetter = 'W';
-
-            return res.status(409).json({
-                error: `Event at ${Math.abs(latitude)} ${latLetter} ${Math.abs(longitude)} ${longLetter} 
-                        overlaps with another event happening between ${event.startTime} and ${event.endTime}.`
-            });
-        }
-    });
-
     const event = await prisma.event.create({
         data: {
             name,
@@ -390,7 +376,7 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
             location: {
                 connectOrCreate: {
                     where: {
-                        coordinates: {
+                        longitude_latitude: {
                             longitude,
                             latitude,
                         },

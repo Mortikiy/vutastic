@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import './superAdminStyles.css';
 import University from '../components/University';
 import { useNavigate } from "react-router-dom";
+import jwt_decode from 'jwt-decode';
 
 function SuperAdminPage() {
     const navigate = useNavigate();
-
+    const [buttons, setButtons] = useState(false);
     useEffect(() =>
     {
   
@@ -17,7 +18,13 @@ function SuperAdminPage() {
           {
               navigate('/');
               return;
-          }
+          }  
+          
+          if (!jwt_decode(myToken).universityId)
+              setButtons(false);
+          else
+              setButtons(true);
+
     }, []);
 
     const goUniv = () =>
@@ -59,6 +66,7 @@ function SuperAdminPage() {
       <button className="button" onClick={goUniv}>
         University Profile
       </button>
+      {!buttons ? <></> : <>
       <button className="button" onClick={goReq}>
         Approve/Deny Request
       </button>
@@ -70,8 +78,8 @@ function SuperAdminPage() {
       </button>
       <button  id="logoff" className="button" onClick={signOut}>
         Log out
-      </button>
-
+      </button></>
+       }
     </div>
     </div>
   );

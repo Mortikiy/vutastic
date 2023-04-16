@@ -166,7 +166,7 @@ const EventForm = ({callCancel, handleSuccess, callRefresh}) => {
       callRefresh();
   };
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCrFIHwRBR5zA5mtIUvbBSHzWWEmaZ5FtU'
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
   });
 
 

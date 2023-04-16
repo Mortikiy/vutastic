@@ -177,6 +177,7 @@ const UniversityCard = ({ university, onTokenChange }) => {
               </>
             )}
           </p>
+          <br></br>
           <p className="university-description">
             {isEditing ? (
               <textarea

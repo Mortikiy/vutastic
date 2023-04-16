@@ -11,24 +11,39 @@ function CreateUniversity(props) {
   const [location, setLocation] = useState(null);
   const [address, setAddress] = useState('');
   const [url, setUrl] = useState('');
+  const [picmessage, setPicMessage] = useState('');
+  const [fileName, setFileName] = useState('');
   const [center, setCenter] = useState({
     lat: 28.5383, lng: -81.3792 
  });
  const { isLoaded } = useLoadScript({
-  googleMapsApiKey: 'AIzaSyCrFIHwRBR5zA5mtIUvbBSHzWWEmaZ5FtU'
+  googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
 });
+
+function handleUpload(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  fetch('/api/upload', {
+    method: 'POST',
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      setPicMessage(data.success);
+      setFileName(data.filename);
+      setTimeout(() => {
+        setPicMessage('');
+      }, 2000);
+    })
+    .catch(err => {
+      console.error(err); // Handle error here
+    });
+}
 
   const handleMapClick = event => {
     setLocation({ latitude: event.latLng.lat(), longitude: event.latLng.lng() });
     setCenter({lat: event.latLng.lat(), lng: event.latLng.lng()});
-  };
-  const handlePictureChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPicture(reader.result);
-    };
-    reader.readAsDataURL(file);
   };
 
   const containerStyle = {
@@ -79,15 +94,17 @@ function CreateUniversity(props) {
     
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault();  
 
     const universityData = JSON.stringify({ 
       name,
       location,
       description,
       numStudents: Number(numStudents),
-      url,
+      picture: `/images/${fileName}`,
     });
+
+    console.log(universityData);
 
     // Send universityData to API endpoint
     fetch('/api/universities/',
@@ -201,14 +218,14 @@ function CreateUniversity(props) {
         </div>
         <div className="form-group" style={{marginBottom: "5px"}}>
           <label className="form-label" htmlFor="picture">
-            Picture URL:
+            Picture:
           </label>
           <input style={{marginLeft: "10px", width: "70%"}}
-            type="text"
+            type="file"
             id="picture"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
+            onChange={(event) => handleUpload(event.target.files[0])}
           />
+          <p style={{color: 'green', fontSize: '16px'}}>{picmessage}</p>
         </div>
         <p id="errmsgg" style={{marginBottom: "5px"}}></p>
         <button className="form-button" type="submit">

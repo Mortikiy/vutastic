@@ -6,7 +6,7 @@ import authenticateJWT from '../middleware/jwt.js';
 const router = express.Router();
 
 function isNotElevatedAdmin(role) {
-    return (role !== 'SERVERADMIN')
+    return (role !== 'SERVERADMIN' && role !== 'SUPERADMIN')
 }
 
 router.post('/superadmin', authenticateJWT, async (req, res) => {

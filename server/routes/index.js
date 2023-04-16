@@ -10,13 +10,17 @@ import admin from './admin.js';
 
 const router = express.Router();
 
-const express = require('express');
-const multer  = require('multer');
+import multer from 'multer';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Define storage for uploaded files
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '../public/images');
+        cb(null, join(__dirname, '..', 'public', 'images'));
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname);

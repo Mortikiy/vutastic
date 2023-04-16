@@ -21,25 +21,30 @@ router.get('/', authenticateJWT, async (req, res) => {
 
     try {
         const rsos = await prisma.rSO.findMany({
-            where: { universityId: university.id },
-            include: {
-              members: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  role: true,
+            where: { 
+                universityId: university.id,
+                NOT: {
+                    status: 'PENDING',
                 },
-              },
-              admin: {
-                select: {
-                  id: true,
-                  firstName: true,
-                },
-              },
             },
-          });          
+            include: {
+                members: {
+                    select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    role: true,
+                    },
+                },
+                admin: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                    },
+                },
+            },
+        });
 
         res.json(rsos);
     } catch (error) {
@@ -314,14 +319,52 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
         return res.status(403).json({ error: 'User is not an admin of the RSO' });
     }
 
-    const queryEvents = await prisma.event.findMany({
+    const location = await prisma.location.findUnique({
         where: {
-            location: {
-                    longitude,
-                    latitude,
-            },
-        },
+            coordinates: {
+                latitude: latitude,
+                longitude: longitude
+            }
+        }
     });
+
+    if (location) {
+        const overlappingEvents = await prisma.event.findMany({
+            where: {
+                locationId: location.id,
+                OR: [
+                    {
+                        startTime: {
+                            lte: new Date(endTime)
+                        },
+                        endTime: {
+                            gte: new Date(startTime)
+                        }
+                    },
+                    {
+                        startTime: {
+                            gte: new Date(startTime)
+                        },
+                        endTime: {
+                            lte: new Date(endTime)
+                        }
+                    }
+                ]
+            }
+        });
+    
+        if (overlappingEvents.length > 0) {
+            let oEvent = overlappingEvents[0];
+            let latLetter = 'N';
+            let longLetter = 'E';
+            if (latitude < 0) latLetter = 'S';
+            if (longitude < 0) longLetter = 'W';
+
+            return res.status(409).json({ error: `An overlapping event ${oEvent.name} already exists at 
+                                                ${Math.abs(latitude)} ${latLetter} ${Math.abs(longitude)} 
+                                                ${longLetter} between ${startTime} and ${endTime}.` });
+        }
+    }
 
     queryEvents.forEach(event => {
         if (startTime < event.endTime && event.startTime < endTime) {

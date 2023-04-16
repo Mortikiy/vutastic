@@ -317,10 +317,8 @@ router.post('/:id/events', authenticateJWT, async (req, res) => {
     const queryEvents = await prisma.event.findMany({
         where: {
             location: {
-                coordinates: {
                     longitude,
                     latitude,
-                },
             },
         },
     });

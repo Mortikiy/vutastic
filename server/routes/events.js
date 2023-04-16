@@ -12,14 +12,21 @@ router.get('/', authenticateJWT, async (req, res) => {
         },
         include: {
             rsos: {
+                where: {
+                    status: 'ACTIVE',
+                },
                 include: {
                     events: {
+                        where: {
+                            type: 'RSO',
+                        },
                         include: {
                             location: true,
                             attendees: true,
                             host: true,
-                        }
-                    }
+                            comments: true,
+                        },
+                    },
                 },
             },
         },
@@ -33,27 +40,26 @@ router.get('/', authenticateJWT, async (req, res) => {
             location: true,
             attendees: true,
             host: true,
-        }
-    })
-
-    const university = await prisma.university.findUnique({
-        where: {
-            id: user.universityId,
+            comments: true,
         },
-        include: {
-            events: true,
-        }
     });
 
-    const events = [...publicEvents];
+    const privateEvents = await prisma.event.findMany({
+        where: {
+            type: 'PRIVATE',
+            universityId: user.universityId,
+        },
+        include: {
+            location: true,
+            attendees: true,
+            host: true,
+            comments: true,
+        },
+    });
 
-    if (university.events) {
-        const privateEvents = university.events.filter((event) => event.type === "PRIVATE");
-        events.push(...privateEvents)
-    }
+    const events = [...publicEvents, ...privateEvents];
 
     let rsoEvents = user.rsos.flatMap((rso) => rso.events);
-    rsoEvents = rsoEvents.filter(event => event.type === 'RSO');
     events.push(...rsoEvents)
 
     res.json(events);

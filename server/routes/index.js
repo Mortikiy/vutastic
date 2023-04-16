@@ -10,6 +10,33 @@ import admin from './admin.js';
 
 const router = express.Router();
 
+const express = require('express');
+const multer  = require('multer');
+
+// Define storage for uploaded files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, '../public/images');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+// Create multer middleware
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5 // Limit file size to 5 MB
+    }
+});
+
+// Define route for file upload
+router.post('/upload', upload.single('image'), (req, res) => {
+    // File has been uploaded, do something with it here
+    res.send({ success: 'File uploaded successfully', filename: req.file.filename});
+});
+
 router.use('/universities', universities);
 router.use('/users', users);
 router.use('/rsos', rsos);

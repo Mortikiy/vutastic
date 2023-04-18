@@ -68,9 +68,10 @@ In `./client` run the following command to make sure npm takes in the change mad
 npm install
 ```
 
-In `./server` run the following command to migrate the database:
+In `./server` run the following commands to generate and migrate the database:
 
 ```bash
+npx prisma generate
 npx prisma migrate dev
 ```
 

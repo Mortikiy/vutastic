@@ -101,7 +101,8 @@ function Requests() {
         <div key={notification.id} className="card">
           <div className="card-body">
             <h5 className="card-title">Type: {notification.type}</h5>
-            <p className="card-text">Name: {notification.type === 'RSO' ? notification.rso.id : notification.event.name}</p>
+            <p className="card-text">Name: {notification.type === 'RSO' ? notification.rso.name : notification.event.name}</p>
+            <p className="card-text">Members: {notification.type === 'RSO' ? (notification.rso.members.map((item) => (item.firstName + ' ' + item.lastName + ' '))) : notification.event.host.firstName + notification.event.host.lastName}</p>
             <button onClick={() => handleAccept(notification.id)} className="btn btn-success">Accept</button>
             <button onClick={() => handleDecline(notification.id)} className="btn btn-danger">Decline</button>
           </div>

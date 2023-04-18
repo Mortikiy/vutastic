@@ -19,6 +19,16 @@ function EventPage() {
   {
     setRefresh(!refresh);
     setRefresh(!refresh);
+    fetch('/api/events/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token'),
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {setEvents(data); console.log(data);})
+    .catch((error) => console.error(error));
   }
   function messageShowFunction()
   {

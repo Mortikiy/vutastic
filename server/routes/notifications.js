@@ -35,11 +35,20 @@ router.get('/', authenticateJWT, async (req, res) => {
         },
         include: {
             admin: true,
-            rso: true,
-            event: true
+            rso: {
+                include: {
+                    members: true,
+                    admin: true,
+                }
+            },
+            event: {
+                include: {
+                    host: true,
+                    rso: true,
+                }
+            }
         }
     })
-
     res.json(notifications)
 });
 

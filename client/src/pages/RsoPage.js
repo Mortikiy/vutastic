@@ -20,7 +20,7 @@ const RSOCard = ({ rso, handleJoin, handleLeave, handleTransferOwnership, userRs
       <div className="rso-card">
         <h3>{rso.name}</h3>
         <h4>Number of members: {rso.members.length}</h4>
-        <h4>Admin: {rso.admin.firstName}</h4>
+        <h4>Admin: {rso.admin ? rso.admin.firstName : null}</h4>
         <h5 style={{marginTop: '5px'}}>Status: {rso.status}</h5>
         <br></br>
         {isCurrentUserAdmin ? (

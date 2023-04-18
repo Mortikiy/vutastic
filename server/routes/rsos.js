@@ -157,7 +157,7 @@ router.put('/:id/leave', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'User is not a member of this RSO' });
     }
 
-    if (rso.members.length === 5) {
+    if (rso.members.length === 4) {
         rso = await prisma.rSO.update({
             where: { id: rso.id },
             data: { members: { disconnect: { id: user.id } }, status: 'INACTIVE' },
@@ -198,7 +198,7 @@ router.put('/:id/join', authenticateJWT, async(req, res) => {
         return res.status(400).json({ error: 'User is not a member of this RSO' });
     }
 
-    if (rso.members.length === 4) {
+    if (rso.members.length === 5) {
         rso = await prisma.rSO.update({
             where: { id: rso.id },
             data: { members: { connect: { id: user.id } }, status: 'ACTIVE' },
